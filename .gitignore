@@ -1,0 +1,20 @@
+# [...](asc_slot://start-slot-5)Sensitive environment variables
+.env
+
+# [...](asc_slot://start-slot-7)Python bytecode/caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs and runtime data
+run_logs/
+*.log
+
+# [...](asc_slot://start-slot-9)Virtual environments
+venv/
+.venv/
+env/
+
+# IDE settings
+.vscode/
+.idea/

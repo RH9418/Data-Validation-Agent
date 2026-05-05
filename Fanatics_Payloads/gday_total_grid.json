@@ -1,0 +1,34 @@
+{
+    "operationName": "fetch_forecast_total_data",
+    "variables": {
+        "query": {
+            "datasetID": 1,
+            "datatable": [
+                "fact_data",
+                "fact_override"
+            ],
+            "after": null,
+            "first": null,
+            "sort": null,
+            "workbookId": "5",
+            "dimensionLevels": null,
+            "aggregatedMeasures": [
+                "stat_sales_dollars_fcst",
+                "user_sales_dollars_fcst",
+                "actual_sales_and_roy_fcst_dollars",
+                "sum_actual_sales_dollars",
+                "sum_actual_sales_dollars_ly",
+                "yoy_sales_pct_change",
+                "sum_actual_sales_dollars_lly"
+            ],
+            "scope": {
+                "dimensionFilters": []
+            },
+            "templateId": "1",
+            "daVersion": "v3",
+            "specialMeasures": [],
+            "needPagination": false
+        }
+    },
+    "query": "query fetch_forecast_total_data($query: DAQueryInputMultiTable!) {\n  daDataQueryMultiTable(queries: [$query]) {\n    edges {\n      node {\n        dimensionMembers {\n          uniqueID\n          name\n          dimensionLevelColumnName\n          comments {\n            measureName\n            comment {\n              isRecalculated\n              isCommentAvailable\n              value\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        measureValues\n        __typename\n      }\n      cursor\n      __typename\n    }\n    pageInfo {\n      totalRows\n      hasNextPage\n      __typename\n    }\n    __typename\n  }\n}"
+}

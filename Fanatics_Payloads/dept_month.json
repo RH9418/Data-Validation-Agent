@@ -1,0 +1,58 @@
+{
+    "operationName": "fetch_monthly_summary_data",
+    "variables": {
+        "query": {
+            "datasetID": 1,
+            "datatable": [
+                "fact_data",
+                "fact_override"
+            ],
+            "after": null,
+            "first": null,
+            "sort": null,
+            "workbookId": "5",
+            "dimensionLevels": [
+                "month"
+            ],
+            "aggregatedMeasures": [
+                "actual_sales_and_roy_fcst_dollars",
+                "user_sales_dollars_fcst",
+                "gd_user_sales_dollars_forecast",
+                "ngd_user_sales_dollars_forecast",
+                "sum_user_incr_dollars_override",
+                "sum_user_base_dollars_override",
+                "sum_actual_sales_dollars",
+                "stat_sales_dollars_fcst",
+                "sum_sys_incr_dollars_fcst",
+                "sum_sys_base_dollars_fcst",
+                "sum_actual_sales_dollars_ly",
+                "yoy_sales_pct_change",
+                "sum_actual_sales_dollars_lly",
+                "yoy_sales_pct_change_lly",
+                "row_count",
+                "is_editable"
+            ],
+            "scope": {
+                "dimensionFilters": [
+                    {
+                        "dimensionColumnName": "time",
+                        "and": [
+                            {
+                                "dimensionLevelColumnName": "latest52_next52",
+                                "cmpOperator": "IN",
+                                "values": [
+                                    1
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "templateId": "1",
+            "daVersion": "v3",
+            "specialMeasures": [],
+            "needPagination": false
+        }
+    },
+    "query": "query fetch_monthly_summary_data($query: DAQueryInputMultiTable!) {\n  daDataQueryMultiTable(queries: [$query]) {\n    edges {\n      node {\n        dimensionMembers {\n          uniqueID\n          name\n          dimensionLevelColumnName\n          comments {\n            measureName\n            comment {\n              isRecalculated\n              isCommentAvailable\n              value\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        measureValues\n        __typename\n      }\n      cursor\n      __typename\n    }\n    pageInfo {\n      totalRows\n      hasNextPage\n      __typename\n    }\n    __typename\n  }\n}"
+}

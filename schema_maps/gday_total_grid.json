@@ -1,0 +1,149 @@
+{
+    "api_payload_context": {
+        "measures": [
+            "stat_sales_dollars_fcst",
+            "user_sales_dollars_fcst",
+            "actual_sales_and_roy_fcst_dollars",
+            "sum_actual_sales_dollars",
+            "sum_actual_sales_dollars_ly",
+            "yoy_sales_pct_change",
+            "sum_actual_sales_dollars_lly"
+        ],
+        "dimensions": [],
+        "filters": {
+            "dimensionFilters": []
+        }
+    },
+    "validated_mappings": {
+        "mappings": [
+            {
+                "logical_ui_name": "stat_sales_dollars_fcst",
+                "is_derived_formula": true,
+                "formula": "sum((case when sys_incr_dollars_fcst is null then 0 else sys_incr_dollars_fcst end)+ (case when sys_base_dollars_fcst is null then 0 else sys_base_dollars_fcst end))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "user_sales_dollars_fcst",
+                "is_derived_formula": true,
+                "formula": "SUM(COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0) + COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "actual_sales_and_roy_fcst_dollars",
+                "is_derived_formula": true,
+                "formula": "SUM(case when editable=0 then actual_sales_dollars else COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0) + COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0) end)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "editable"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "sum_actual_sales_dollars",
+                "is_derived_formula": false,
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "sum_actual_sales_dollars_ly",
+                "is_derived_formula": false,
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "yoy_sales_pct_change",
+                "is_derived_formula": true,
+                "formula": "((actual_sales_and_roy_fcst_dollars-sum_actual_sales_dollars_ly) / NULLIF(sum_actual_sales_dollars_ly, 0))*100",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "actual_sales_and_roy_fcst_dollars",
+                    "sum_actual_sales_dollars_ly"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "sum_actual_sales_dollars_lly",
+                "is_derived_formula": false,
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            }
+        ],
+        "dimension_mappings": []
+    }
+}

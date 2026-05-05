@@ -1,0 +1,270 @@
+{
+    "api_payload_context": {
+        "measures": [
+            "actual_sales_and_roy_fcst_dollars",
+            "user_sales_dollars_fcst",
+            "gd_user_sales_dollars_forecast",
+            "ngd_user_sales_dollars_forecast",
+            "sum_user_incr_dollars_override",
+            "sum_user_base_dollars_override",
+            "dept_penetration_ty",
+            "dept_penetration_ly",
+            "dept_penetration_lly",
+            "is_editable",
+            "row_count",
+            "product3_pagination_count"
+        ],
+        "dimensions": [
+            "product3",
+            "month"
+        ],
+        "filters": {
+            "dimensionFilters": [
+                {
+                    "dimensionColumnName": "time",
+                    "and": [
+                        {
+                            "dimensionLevelColumnName": "latest52_next52",
+                            "cmpOperator": "IN",
+                            "values": [
+                                1
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "validated_mappings": {
+        "mappings": [
+            {
+                "logical_ui_name": "actual_sales_and_roy_fcst_dollars",
+                "is_derived_formula": true,
+                "formula": "SUM(case when editable=0 then actual_sales_dollars else COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0) + COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0) end)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "editable"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "user_sales_dollars_fcst",
+                "is_derived_formula": true,
+                "formula": "SUM(COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0) + COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "gd_user_sales_dollars_forecast",
+                "is_derived_formula": true,
+                "formula": "SUM(COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "ngd_user_sales_dollars_forecast",
+                "is_derived_formula": true,
+                "formula": "SUM(COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "sum_user_incr_dollars_override",
+                "is_derived_formula": false,
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "sum_user_base_dollars_override",
+                "is_derived_formula": false,
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "dept_penetration_ty",
+                "is_derived_formula": true,
+                "formula": "CASE WHEN actual_sales_and_roy_fcst_dollars!=0 THEN actual_sales_and_roy_fcst_dollars/(SUM(actual_sales_and_roy_fcst_dollars) OVER(PARTITION BY T.month_id))*100 ELSE 0.0 END",
+                "dependencies": [
+                    {
+                        "physical_table": "month_dim_desc",
+                        "physical_column": "month_id"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "dept_penetration_ly",
+                "is_derived_formula": true,
+                "formula": "CASE WHEN sum_actual_sales_dollars_ly!=0 THEN sum_actual_sales_dollars_ly/(SUM(sum_actual_sales_dollars_ly) OVER(PARTITION BY T.month_id))*100 ELSE 0.0 END",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_ly"
+                    },
+                    {
+                        "physical_table": "month_dim_desc",
+                        "physical_column": "month_id"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "dept_penetration_lly",
+                "is_derived_formula": true,
+                "formula": "CASE WHEN sum_actual_sales_dollars_lly!=0 THEN sum_actual_sales_dollars_lly/(SUM(sum_actual_sales_dollars_lly) OVER(PARTITION BY T.month_id))*100 ELSE 0.0 END",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_lly"
+                    },
+                    {
+                        "physical_table": "month_dim_desc",
+                        "physical_column": "month_id"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "is_editable",
+                "is_derived_formula": true,
+                "formula": "CAST((sum_editable/NULLIF(row_count,0)) AS DECIMAL(10,8))::int",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "editable"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_editable",
+                    "row_count"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "row_count",
+                "is_derived_formula": true,
+                "formula": "COUNT(*)",
+                "dependencies": [],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "product3_pagination_count",
+                "is_derived_formula": true,
+                "formula": "((dense_rank() over (  order by product3_ids asc)) + (dense_rank() over (  order by product3_ids desc)) - 1)",
+                "dependencies": [
+                    {
+                        "physical_table": "product3_dim_desc",
+                        "physical_column": "product3_id"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "MATH_ON_MATH"
+            }
+        ],
+        "dimension_mappings": [
+            {
+                "logical_dimension": "month",
+                "physical_table": "month_dim_desc",
+                "primary_key": "month_id",
+                "requires_bridge": false,
+                "base_key": "month_id",
+                "display_column": "month_name"
+            },
+            {
+                "logical_dimension": "time",
+                "physical_table": "time_dim_desc",
+                "primary_key": "time_id",
+                "requires_bridge": true,
+                "bridge_table": "time_dim_xref",
+                "base_key": "time_id",
+                "display_column": "time_name"
+            },
+            {
+                "logical_dimension": "product3",
+                "physical_table": "product3_dim_desc",
+                "primary_key": "product3_id",
+                "requires_bridge": true,
+                "bridge_table": "product_dim_xref",
+                "base_key": "product_id",
+                "display_column": "product3_name"
+            }
+        ]
+    }
+}

@@ -1,0 +1,713 @@
+{
+    "api_payload_context": {
+        "measures": [
+            "min_series_num",
+            "month_num",
+            "day_name",
+            "min_opp_team",
+            "stat_sales_dollars_fcst",
+            "avg_sys_attendance_fcst",
+            "initial_per_cap_stat_fcst",
+            "stat_sales_dollars_override",
+            "sum_user_incr_dollars_override",
+            "sum_user_base_dollars_override",
+            "user_sales_dollars_fcst",
+            "avg_user_attendance_override",
+            "user_attendance_fcst",
+            "per_cap_fcst_dollars_adjusted",
+            "actual_sales_and_roy_fcst_dollars",
+            "actual_attendance_and_roy_fcst",
+            "actual_and_roy_per_cap",
+            "sum_actual_sales_dollars",
+            "avg_attendance",
+            "yoy_sales_pct_change",
+            "min_date_ly",
+            "month_ly",
+            "dow_ly",
+            "min_opp_team_ly",
+            "sum_actual_sales_dollars_ly",
+            "avg_attendance_ly",
+            "per_cap_ly",
+            "min_date_lly",
+            "month_lly",
+            "dow_lly",
+            "min_opp_team_lly",
+            "sum_actual_sales_dollars_lly",
+            "avg_attendance_lly",
+            "per_cap_lly",
+            "planner_tag",
+            "row_count",
+            "is_editable",
+            "pt_editable"
+        ],
+        "dimensions": [
+            "product4",
+            "game_num",
+            "season_type",
+            "result",
+            "time",
+            "game_day"
+        ],
+        "filters": {}
+    },
+    "validated_mappings": {
+        "mappings": [
+            {
+                "logical_ui_name": "min_series_num",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "series_num"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "month_num",
+                "is_derived_formula": true,
+                "formula": "TO_CHAR(time_name::DATE, 'Month')",
+                "dependencies": [
+                    {
+                        "physical_table": "time_dim_desc",
+                        "physical_column": "time_name"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "day_name",
+                "is_derived_formula": true,
+                "formula": "TO_CHAR(time_name::DATE, 'Day')",
+                "dependencies": [
+                    {
+                        "physical_table": "time_dim_desc",
+                        "physical_column": "time_name"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "min_opp_team",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "opp_team"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "stat_sales_dollars_fcst",
+                "is_derived_formula": true,
+                "formula": "sum((case when sys_incr_dollars_fcst is null then 0 else sys_incr_dollars_fcst end)+ (case when sys_base_dollars_fcst is null then 0 else sys_base_dollars_fcst end))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "avg_sys_attendance_fcst",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_attendance_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "initial_per_cap_stat_fcst",
+                "is_derived_formula": true,
+                "formula": "(sum_sys_incr_dollars_fcst + sum_sys_base_dollars_fcst) / NULLIF(avg_sys_attendance_fcst, 0)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_attendance_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_sys_incr_dollars_fcst",
+                    "sum_sys_base_dollars_fcst",
+                    "avg_sys_attendance_fcst"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "stat_sales_dollars_override",
+                "is_derived_formula": true,
+                "formula": "sum(case when user_base_dollars_override is null then 0 else user_base_dollars_override end) + sum(case when user_incr_dollars_override is null then 0 else user_incr_dollars_override end)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "sum_user_incr_dollars_override",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "sum_user_base_dollars_override",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "user_sales_dollars_fcst",
+                "is_derived_formula": true,
+                "formula": "SUM(COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0) + COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "avg_user_attendance_override",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_attendance_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "user_attendance_fcst",
+                "is_derived_formula": true,
+                "formula": "AVG(COALESCE(fact_override.user_attendance_override, fact_data.sys_attendance_fcst))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_attendance_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_attendance_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "per_cap_fcst_dollars_adjusted",
+                "is_derived_formula": true,
+                "formula": "(COALESCE(sum_user_incr_dollars_override,sum_sys_incr_dollars_fcst) + COALESCE(sum_user_base_dollars_override,sum_sys_base_dollars_fcst)) / NULLIF(COALESCE(avg_user_attendance_override, avg_sys_attendance_fcst), 0)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_attendance_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_attendance_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_user_incr_dollars_override",
+                    "sum_sys_incr_dollars_fcst",
+                    "sum_user_base_dollars_override",
+                    "sum_sys_base_dollars_fcst",
+                    "avg_user_attendance_override",
+                    "avg_sys_attendance_fcst"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "actual_sales_and_roy_fcst_dollars",
+                "is_derived_formula": true,
+                "formula": "SUM(case when editable=0 then actual_sales_dollars else COALESCE(fact_override.user_incr_dollars_override, fact_data.sys_incr_dollars_fcst, 0) + COALESCE(fact_override.user_base_dollars_override, fact_data.sys_base_dollars_fcst, 0) end)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_base_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_base_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_incr_dollars_override"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "editable"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_incr_dollars_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "actual_attendance_and_roy_fcst",
+                "is_derived_formula": true,
+                "formula": "avg(case when editable=0 then attendance else coalesce(user_attendance_override, sys_attendance_fcst) end)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "attendance"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "sys_attendance_fcst"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "editable"
+                    },
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "user_attendance_override"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "actual_and_roy_per_cap",
+                "is_derived_formula": true,
+                "formula": "case when actual_attendance_and_roy_fcst> 0 then actual_sales_and_roy_fcst_dollars/actual_attendance_and_roy_fcst else 0 end",
+                "dependencies": [],
+                "required_intermediate_aliases": [
+                    "actual_attendance_and_roy_fcst",
+                    "actual_sales_and_roy_fcst_dollars"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "sum_actual_sales_dollars",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "avg_attendance",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "attendance"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "yoy_sales_pct_change",
+                "is_derived_formula": true,
+                "formula": "((actual_sales_and_roy_fcst_dollars-sum_actual_sales_dollars_ly) / NULLIF(sum_actual_sales_dollars_ly, 0))*100",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "actual_sales_and_roy_fcst_dollars",
+                    "sum_actual_sales_dollars_ly"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "min_date_ly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "date_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "month_ly",
+                "is_derived_formula": true,
+                "formula": "TO_CHAR(min_date_ly, 'Month')",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "date_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "dow_ly",
+                "is_derived_formula": true,
+                "formula": "to_char(min_date_ly, 'Day')",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "date_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "min_opp_team_ly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "opp_team_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "sum_actual_sales_dollars_ly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "avg_attendance_ly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "attendance_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "per_cap_ly",
+                "is_derived_formula": true,
+                "formula": "sum_actual_sales_dollars_ly / NULLIF(avg_attendance_ly, 0)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "attendance_ly"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_ly"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_actual_sales_dollars_ly",
+                    "avg_attendance_ly"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "min_date_lly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "date_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "month_lly",
+                "is_derived_formula": true,
+                "formula": "TO_CHAR(min_date_lly, 'Month')",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "date_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "dow_lly",
+                "is_derived_formula": true,
+                "formula": "to_char(min_date_lly, 'Day')",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "date_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "min_opp_team_lly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "opp_team_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "sum_actual_sales_dollars_lly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "avg_attendance_lly",
+                "is_derived_formula": false,
+                "formula": "",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "attendance_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [],
+                "metric_stage": "BASE_ONLY"
+            },
+            {
+                "logical_ui_name": "per_cap_lly",
+                "is_derived_formula": true,
+                "formula": "sum_actual_sales_dollars_lly / NULLIF(avg_attendance_lly, 0)",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "attendance_lly"
+                    },
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "actual_sales_dollars_lly"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_actual_sales_dollars_lly",
+                    "avg_attendance_lly"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "planner_tag",
+                "is_derived_formula": true,
+                "formula": "CAST( (sum_planner_tag_override / NULLIF(row_count, 0)) AS DECIMAL(10,8))",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_override",
+                        "physical_column": "planner_tag_override"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_planner_tag_override",
+                    "row_count"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "row_count",
+                "is_derived_formula": true,
+                "formula": "COUNT(*)",
+                "dependencies": [],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            },
+            {
+                "logical_ui_name": "is_editable",
+                "is_derived_formula": true,
+                "formula": "CAST((sum_editable/NULLIF(row_count,0)) AS DECIMAL(10,8))::int",
+                "dependencies": [
+                    {
+                        "physical_table": "fact_data",
+                        "physical_column": "editable"
+                    }
+                ],
+                "required_intermediate_aliases": [
+                    "sum_editable",
+                    "row_count"
+                ],
+                "metric_stage": "MATH_ON_MATH"
+            },
+            {
+                "logical_ui_name": "pt_editable",
+                "is_derived_formula": true,
+                "formula": "1",
+                "dependencies": [],
+                "required_intermediate_aliases": [],
+                "metric_stage": "STANDARD_AGGREGATION"
+            }
+        ],
+        "dimension_mappings": [
+            {
+                "logical_dimension": "season_type",
+                "physical_table": "season_type_dim_desc",
+                "primary_key": "season_type_id",
+                "requires_bridge": true,
+                "bridge_table": "season_type_dim_xref",
+                "base_key": "season_type_id",
+                "display_column": "season_type_name"
+            },
+            {
+                "logical_dimension": "game_day",
+                "physical_table": "game_day_dim_desc",
+                "primary_key": "game_day_id",
+                "requires_bridge": true,
+                "bridge_table": "game_day_dim_xref",
+                "base_key": "game_day_id",
+                "display_column": "game_day_name"
+            },
+            {
+                "logical_dimension": "product4",
+                "physical_table": "product4_dim_desc",
+                "primary_key": "product4_id",
+                "requires_bridge": true,
+                "bridge_table": "product_dim_xref",
+                "base_key": "product_id",
+                "display_column": "product4_name"
+            },
+            {
+                "logical_dimension": "game_num",
+                "physical_table": "game_num_dim_desc",
+                "primary_key": "game_num_id",
+                "requires_bridge": true,
+                "bridge_table": "game_num_dim_xref",
+                "base_key": "game_num_id",
+                "display_column": "game_num_name"
+            },
+            {
+                "logical_dimension": "time",
+                "physical_table": "time_dim_desc",
+                "primary_key": "time_id",
+                "requires_bridge": true,
+                "bridge_table": "time_dim_xref",
+                "base_key": "time_id",
+                "display_column": "time_name"
+            },
+            {
+                "logical_dimension": "result",
+                "physical_table": "result_dim_desc",
+                "primary_key": "result_id",
+                "requires_bridge": true,
+                "bridge_table": "result_dim_xref",
+                "base_key": "result_id",
+                "display_column": "result_name"
+            }
+        ]
+    }
+}

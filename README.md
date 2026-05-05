@@ -46,7 +46,7 @@ Install the necessary dependencies from the requirements file. It is recommended
         Rewrite the `payload.json` file with your specific GraphQL API Payload request.
 
 ###     Step 3: Run the Schema Detective
-        Execute the neuro-symbolic orchestrator script using the following command:
+        Execute schema detective script using the following command:
 `python schema_detective.py`
 <br>Output will be a validated schema map which contains formulas and dependencies of all requested measures saved to `validated_schema_map.json`. Review and compare this to original API Payload.
 #### Pro Tip: Save a copy of the `validated_schema_map.json` so you don't have to rerun the schema detective for the same API Payload.
